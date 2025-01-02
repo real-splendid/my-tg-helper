@@ -1,0 +1,5 @@
+gen-certs:
+	openssl req -x509 -newkey rsa:2048 -keyout key.pem -out cert.pem -days 3560 -subj "/O=Org/CN=Test" -nodes
+
+env-from-example:
+	cp --update=none .env.example .env
