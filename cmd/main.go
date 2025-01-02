@@ -12,7 +12,7 @@ import (
 func main() {
 	bot, err := tgbotapi.NewBotAPI(os.Getenv("BOT_TOKEN"))
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("Error initializing bot: %v", err)
 	}
 
 	debug, _ := strconv.ParseBool(os.Getenv("BOT_DEBUG_MODE"))
@@ -26,12 +26,12 @@ func main() {
 
 	_, err = bot.Request(wh)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("Error setting webhook: %v", err)
 	}
 
 	info, err := bot.GetWebhookInfo()
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("Error getting webhook info: %v", err)
 	}
 
 	if info.LastErrorDate != 0 {
@@ -40,9 +40,14 @@ func main() {
 
 	updates := bot.ListenForWebhook("/" + bot.Token)
 	port := os.Getenv("BOT_SERVER_PORT")
-	go http.ListenAndServeTLS("0.0.0.0:"+port, certPath, os.Getenv("BOT_KEY_PATH"), nil)
+	go func() {
+		err := http.ListenAndServeTLS("0.0.0.0:"+port, certPath, os.Getenv("BOT_KEY_PATH"), nil)
+		if err != nil {
+			log.Fatalf("Error starting server: %v", err)
+		}
+	}()
 
 	for update := range updates {
-		log.Printf("%+v\n", update)
+		log.Printf("Received update: %+v\n", update)
 	}
 }
