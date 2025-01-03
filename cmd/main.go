@@ -37,7 +37,7 @@ func init() {
 
 	// Get initial Sber token
 	var err error
-	sberToken, err = internal.GetSberToken(config.SberAuthKey)
+	sberToken, err = internal.GetSberToken(config.SberAuthKey, config.RqUID)
 	if err != nil {
 		slog.Error("failed to get Sber token", "error", err)
 		os.Exit(1)
@@ -58,7 +58,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		slog.Error("failed to synthesize speech", "error", err)
 		// Try to refresh token and retry once
-		sberToken, err = internal.GetSberToken(config.SberAuthKey)
+		sberToken, err = internal.GetSberToken(config.SberAuthKey, config.RqUID)
 		if err != nil {
 			slog.Error("failed to refresh Sber token", "error", err)
 			sendMessage(map[string]interface{}{

@@ -16,7 +16,7 @@ type OAuthResponse struct {
 }
 
 // GetSberToken obtains OAuth token from Sber API
-func GetSberToken(authToken string) (string, error) {
+func GetSberToken(authToken string, rqUID string) (string, error) {
 	endpoint := "https://ngw.devices.sberbank.ru:9443/api/v2/oauth"
 	data := url.Values{}
 	data.Set("scope", "SALUTE_SPEECH_PERS")
@@ -28,6 +28,7 @@ func GetSberToken(authToken string) (string, error) {
 
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	req.Header.Set("Accept", "application/json")
+	req.Header.Set("RqUID", rqUID)
 	req.Header.Set("Authorization", "Basic "+authToken)
 
 	tr := &http.Transport{
@@ -56,7 +57,7 @@ func GetSberToken(authToken string) (string, error) {
 // SynthesizeText converts text to speech using Sber SmartSpeech API
 func SynthesizeText(text string, accessToken string) ([]byte, error) {
 	endpoint := "https://smartspeech.sber.ru/rest/v1/text:synthesize"
-	
+
 	req, err := http.NewRequest("POST", endpoint, bytes.NewBufferString(text))
 	if err != nil {
 		return nil, fmt.Errorf("creating request: %w", err)
