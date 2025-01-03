@@ -1,15 +1,7 @@
 gen-certs:
-	openssl req \
-		-x509 \
-		-newkey rsa:2048 \
-		-keyout key.pem \
-		-days 3560 \
-		-subj "/O=Org/CN=Test" \
-		-out cert.pem \
-		-nodes
-	mv key.pem cert
-	mv cert.pem cert
-
+	openssl req -newkey rsa:2048 -sha256 -nodes -keyout private.key -x509 -days 365 -out public.pem -subj "/C=US/ST=New York/L=Brooklyn/O=Example Brooklyn Company/CN=YOURDOMAIN.EXAMPLE"
+	mv private.key cert
+	mv public.pem cert
 
 env-from-example:
 	cp --no-clobber .env.example .env
